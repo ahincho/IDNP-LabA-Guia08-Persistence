@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.text.Editable
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.unsa.persistence.data.model.Applicant
-import com.unsa.persistence.data.providers.ApplicantProvider
 import com.unsa.persistence.databinding.ActivityAddBinding
+import com.unsa.persistence.ui.viewmodel.AddViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AddActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddBinding
+    private val addViewModel: AddViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddBinding.inflate(layoutInflater)
@@ -21,7 +25,7 @@ class AddActivity : AppCompatActivity() {
         binding.btnAdd.setOnClickListener {
             if (checkFields()) {
                 Toast.makeText(this, "Applicant was added!", Toast.LENGTH_LONG).show()
-                ApplicantProvider.applicants.add(0, buildApplicant())
+                addViewModel.addApplicant(buildApplicant())
                 cleanFields()
             } else {
                 Toast.makeText(this, "Please complete all the fields", Toast.LENGTH_SHORT).show()
@@ -50,7 +54,7 @@ class AddActivity : AppCompatActivity() {
         val birthday = getText(binding.etBirthday)
         val school = getText(binding.etSchool)
         val career = getText(binding.etCareer)
-        return Applicant(document, name, lastname, birthday, school, career)
+        return Applicant(0, document, name, lastname, birthday, school, career)
     }
     private fun cleanFields() {
         cleanField(binding.etDocument)
